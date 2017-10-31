@@ -1,0 +1,27 @@
+{
+  "name": "quill-hybrid-theme",
+  "version": "0.0.1",
+  "description": "",
+  "main": "webpack.config.js",
+  "authors": [
+    "contentco"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "content",
+    "emoji",
+    "quill",
+    "editor"
+  ],
+  "homepage": "https://github.com/contentco/quill-hybrid-theme",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "quill-inline-comment": "contentco/quill-inline-comment#b2247a66ff3490e5c0b4e24aa76436c6de36ac44"
+  }
+}
