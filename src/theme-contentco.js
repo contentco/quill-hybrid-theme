@@ -44,7 +44,6 @@ class ContentTooltip extends BaseTooltip {
   constructor(quill, bounds) {
     super(quill, bounds);
     this.quill.on(Emitter.events.EDITOR_CHANGE, (type, range, oldRange, source) => {
-      console.log(Emitter.events);
       if (type !== Emitter.events.SELECTION_CHANGE) return;
       if (range != null && range.length > 0 && source === Emitter.sources.USER) {
         this.show();
