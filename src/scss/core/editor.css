@@ -906,10 +906,30 @@
   border: 1px solid #ccc;
 }
 
-.ql-toolbar-extended{
+.ql-toolbar-hybrid{
   border: 1px solid #ccc;
   box-sizing: border-box;
   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   padding: 8px;
   border-bottom: 0px;
+}
+
+.ql-hybrid .ql-tooltip {
+    background-color: #fff !important;
+    border-radius: 25px;
+    color: #fff;
+    border: 1px solid #DDD;
+}
+
+.ql-hybrid .ql-tooltip {
+    position: absolute;
+    transform: translateY(10px);
+}
+
+.ql-hybrid .ql-hidden {
+    display: none;
+}
+
+.ql-bubble * {
+    box-sizing: border-box;
 }

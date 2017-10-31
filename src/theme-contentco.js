@@ -3,7 +3,6 @@ import Emitter from 'quill/core/emitter';
 import BaseTheme, { BaseTooltip } from 'quill/themes/base';
 import LinkBlot from 'quill/formats/link';
 import { Range } from 'quill/core/selection';
-//import icons from 'quill/ui/icons';
 var icons = Quill.import('ui/icons');
 
 var Toolbar = Quill.import('modules/toolbar');
@@ -45,6 +44,7 @@ class ContentTooltip extends BaseTooltip {
   constructor(quill, bounds) {
     super(quill, bounds);
     this.quill.on(Emitter.events.EDITOR_CHANGE, (type, range, oldRange, source) => {
+      console.log(Emitter.events);
       if (type !== Emitter.events.SELECTION_CHANGE) return;
       if (range != null && range.length > 0 && source === Emitter.sources.USER) {
         this.show();
@@ -55,6 +55,7 @@ class ContentTooltip extends BaseTooltip {
         let lines = this.quill.getLines(range.index, range.length);
         if (lines.length === 1) {
           this.position(this.quill.getBounds(range));
+          this.position({bottom:this.quill.getBounds(range).bottom,height:this.quill.getBounds(range).height,left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,right: 0,top:this.quill.getBounds(range).top,width:this.quill.getBounds(range).width});
         } else {
           let lastLine = lines[lines.length - 1];
           let index = this.quill.getIndex(lastLine);
@@ -92,13 +93,15 @@ class ContentTooltip extends BaseTooltip {
   position(reference) {
     let shift = super.position(reference);
     let arrow = this.root.querySelector('.ql-tooltip-arrow');
-    arrow.style.marginLeft = '';
-    if (shift === 0) return shift;
-    arrow.style.marginLeft = (-1*shift - arrow.offsetWidth/2) + 'px';
+    if (arrow) {
+      arrow.style.marginLeft = '';
+      if (shift === 0) return shift;
+      arrow.style.marginLeft = (-1*shift - arrow.offsetWidth/2) + 'px';
+    }
+
   }
 }
 ContentTooltip.TEMPLATE = [
-  '<span class="ql-tooltip-arrow"></span>',
   '<div class="ql-tooltip-editor">',
     '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">',
     '<a class="ql-close"></a>',
@@ -119,7 +122,7 @@ class InlineToolbar extends Toolbar {
     //   this.container = container;
     // }
 
-    this.container.classList.add('ql-toolbar-extended');
+    this.container.classList.add('ql-toolbar-hybrid');
   }
 }
 
