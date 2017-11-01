@@ -1,9 +1,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <link href="../src/scss/core/editor.css" rel="stylesheet">
-        <link href="https://cdn.quilljs.com/1.2.2/quill.bubble.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="../dist/quill-inline-comment.css">
+        <link href="https://cdn.quilljs.com/1.2.2/quill.snow.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../dist/quill-hybrid-theme.css">
         <link rel="stylesheet" type="text/css" href="../bower_components/quill-inline-comment/dist/quill-inline-comment.css">
         <style type="text/css">
           .inline-comment{
@@ -64,6 +63,13 @@
         <script type="text/javascript">
           var toolbarOptions = {
             container: [
+              ['comment']
+            ],
+            handlers: {'comment': function() {}}
+          }
+
+          var inlineToolbarOptions = {
+            container: [
               [ 'bold', 'italic', 'underline', 'strike', 'blockquote',
               { 'list': 'bullet' },
               { 'list': 'ordered' },
@@ -71,16 +77,10 @@
               { 'indent': '+1' },
               { 'color': [] },
               { 'background': [] },
+              { 'header': [1, 2, 3, false] },
               { 'align': [] },
               'link', 'image', 'video',
               ]
-            ],
-            handlers: {'comment': function() {}}
-          }
-
-          var inlineToolbarOptions = {
-            container: [
-              ['comment']
             ],
             handlers: {'comment': function() {}}
           }
@@ -91,17 +91,17 @@
                     inline_comment: true
               },
               placeholder: 'Compose an epic...',
-              theme: 'contentco',
+              theme: 'hybrid',
           });
 
-          var quillTwo = new Quill('#bubble-editor', {
-              modules: {
-                    toolbar: inlineToolbarOptions,
-                    inline_comment: true
-              },
-              placeholder: 'Compose an epic...',
-              theme: 'bubble',
-          });
+          // var quillTwo = new Quill('#bubble-editor', {
+          //     modules: {
+          //           toolbar: inlineToolbarOptions,
+          //           inline_comment: true
+          //     },
+          //     placeholder: 'Compose an epic...',
+          //     theme: 'bubble',
+          // });
           var content = '<p>testing content for new theme</p><p>testing content for new theme</p>';
           quill.pasteHTML(content);
         setInterval( function() { document.getElementById("output_delta").value=JSON.stringify(quill.editor.getDelta()) }, 500);

@@ -56,7 +56,7 @@ const config = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('quill-inline-comment.css'),
+        new ExtractTextPlugin('quill-hybrid-theme.css'),
         new UglifyJSPlugin({
             compress: {
                 warnings: false,

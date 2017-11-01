@@ -7,7 +7,8 @@ import { Range } from 'quill/core/selection';
 let ColorPicker = Quill.import('ui/color-picker');
 let Picker = Quill.import('ui/picker');
 let IconPicker = Quill.import('ui/icon-picker');
-var icons = Quill.import('ui/icons');
+let icons = Quill.import('ui/icons');
+let Delta = Quill.import('delta');
 
 var Toolbar = Quill.import('modules/toolbar');
 
@@ -44,36 +45,18 @@ class Contentco extends BaseTheme {
   }
 
   extendToolbar(toolbar) {
-    toolbar.container.classList.add('ql-snow');
-    toolbar.addHandler('link', this.linkEventHanlder);
-    toolbar.addHandler('video', this.videoEventHanlder);
-
+    toolbar.container.classList.add('ql-bubble');
     this.buildButtons([].slice.call(toolbar.container.querySelectorAll('button')), icons);
     this.buildPickers([].slice.call(toolbar.container.querySelectorAll('select')), icons);
     this.tooltip = new SnowTooltip(this.quill, this.options.bounds);
     //this.tooltip.root.appendChild(toolbar.container);
     this.actionBtn = new ContentTooltip(this.quill, this.options.bounds);
-    //this.actionBtn.root.appendChild(toolbar.container);
-    // console.log('here',this);
+    this.actionBtn.root.appendChild(toolbar.container);
 
     if (toolbar.container.querySelector('.ql-link')) {
       this.quill.keyboard.addBinding({ key: 'K', shortKey: true }, function(range, context) {
         toolbar.handlers['link'].call(toolbar, !context.format.link);
       });
-    }
-  }
-  linkEventHanlder(){
-    this.quill.theme.tooltip.edit('link');
-    if (this.quill.theme.tooltip.root.offsetLeft < 0) {
-      this.quill.theme.tooltip.root.style.left = '0px';
-      this.quill.theme.tooltip.textbox.placeholder = '';
-    }
-  }
-
-  videoEventHanlder(){
-    this.quill.theme.tooltip.edit('video');
-    if (this.quill.theme.tooltip.root.offsetLeft < 0) {
-      this.quill.theme.tooltip.root.style.left = '0px';
     }
   }
 }
@@ -84,7 +67,7 @@ class ContentTooltip {
   constructor(quill, boundsContainer) {
     this.quill = quill;
     this.boundsContainer = this.quill.container || document.body;
-    this.root = quill.addContainer('ql-action');
+    this.root = quill.addContainer('ql-bubble-actions');
     this.root.innerHTML = this.constructor.TEMPLATE;
 
     if (this.quill.root === this.quill.scrollingContainer) {
@@ -94,16 +77,25 @@ class ContentTooltip {
     }
 
     this.root.classList.add('ql-hidden');//testing
-
     this.quill.on(Emitter.events.EDITOR_CHANGE, (type, range, oldRange, source) => {
       if (type !== Emitter.events.SELECTION_CHANGE) return;
       if (range != null && range.length > 0 && source === Emitter.sources.USER) {
         this.show();
+        // Lock our width so we will expand beyond our offsetParent boundaries
+        // this.root.style.left = '0px';
+        // this.root.style.width = '';
+        // this.root.style.width = this.root.offsetWidth + 'px';
         let lines = this.quill.getLines(range.index, range.length);
         if (lines.length === 1) {
-          this.position({bottom:this.quill.getBounds(range).bottom,
-            height:this.quill.getBounds(range).height,left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,
-            right: this.root.offsetWidth/2,top:this.quill.getBounds(range).top,width:this.quill.getBounds(range).width});
+          //this.position(this.quill.getBounds(range));
+          this.position({bottom:this.quill.getBounds(range).bottom,height:this.quill.getBounds(range).height,left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,right: 0,top:this.quill.getBounds(range).top,width:this.quill.getBounds(range).width});
+        }
+        else {
+        //   let lastLine = lines[lines.length - 1];
+        //   let index = this.quill.getIndex(lastLine);
+        //   let length = Math.min(lastLine.length() - 1, range.index + range.length - index);
+        //   let bounds = this.quill.getBounds(new Range(index, length));
+        //   this.position(bounds);
         }
       } else if (document.activeElement !== this.textbox && this.quill.hasFocus()) {
         this.hide();
@@ -143,10 +135,9 @@ class ContentTooltip {
   }
 
   position(reference) {
-    console.log(reference);
-    let right = reference.right;
-    let top = reference.bottom + this.quill.root.scrollTop;
-    this.root.style.right = '-'+ right + 'px';
+    let left = reference.left;
+    let top = reference.top;
+    this.root.style.left = left + 'px';
     this.root.style.top = top + 'px';
   }
 }
@@ -211,21 +202,19 @@ SnowTooltip.TEMPLATE = [
   '<a class="ql-remove"></a>'
 ].join('');
 
-Quill.register('themes/contentco', Contentco);
+Quill.register('themes/hybrid', Contentco);
 
 
 class InlineToolbar extends Toolbar {
   constructor(quill, options) {
     super(quill, options);
     this.container.classList.add('ql-toolbar-hybrid');
-    //this.container.classList.add('ql-snow');
+    this.container.classList.add('ql-snow');
     this.buildButtons([].slice.call(this.container.querySelectorAll('button')), icons);
     this.buildPickers([].slice.call(this.container.querySelectorAll('select')), icons);
     this.addHandler('link', this.linkEventHanlder);
     this.addHandler('video', this.videoEventHanlder);
-
-    this.actionBtn = new ContentTooltip(this.quill, this.options.bounds);
-    this.actionBtn.root.appendChild(this.container);
+    this.addHandler('image', this.imageEventHanlder);
   }
 
   linkEventHanlder(){
@@ -241,6 +230,35 @@ class InlineToolbar extends Toolbar {
     if (this.quill.theme.tooltip.root.offsetLeft < 0) {
       this.quill.theme.tooltip.root.style.left = '0px';
     }
+  }
+
+  imageEventHanlder(){
+
+      var fileInput = this.container.querySelector('input.ql-image[type=file]');
+      if (fileInput == null) {
+        fileInput = document.createElement('input');
+        fileInput.setAttribute('type', 'file');
+        fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
+        fileInput.classList.add('ql-image');
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files != null && fileInput.files[0] != null) {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+              let range = this.quill.getSelection(true);
+              this.quill.updateContents(new Delta()
+                .retain(range.index)
+                .delete(range.length)
+                .insert({ image: e.target.result })
+              , Emitter.sources.USER);
+              this.quill.setSelection(range.index + 1, Emitter.sources.SILENT);
+              fileInput.value = "";
+            }
+            reader.readAsDataURL(fileInput.files[0]);
+          }
+        });
+        this.container.appendChild(fileInput);
+      }
+    fileInput.click();
   }
 
   buildButtons(buttons, icons) {
