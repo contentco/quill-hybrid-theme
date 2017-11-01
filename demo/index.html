@@ -71,8 +71,17 @@
 
           var inlineToolbarOptions = {
             container: [
-              ['bold', 'italic', 'underline', 'strike'],
-              ['link']
+              [ 'bold', 'italic', 'underline', 'strike', 'blockquote',
+              { 'list': 'bullet' },
+              { 'list': 'ordered' },
+              { 'indent': '-1' },
+              { 'indent': '+1' },
+              { 'color': [] },
+              { 'background': [] },
+              { 'header': [1, 2, 3, false] },
+              { 'align': [] },
+              'link', 'image', 'video',
+              ]
             ],
             handlers: {'comment': function() {}}
           }
