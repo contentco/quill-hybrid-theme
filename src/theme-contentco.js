@@ -44,14 +44,17 @@ class Contentco extends BaseTheme {
   }
 
   extendToolbar(toolbar) {
-    toolbar.container.classList.add('ql-bubble');
+    toolbar.container.classList.add('ql-snow');
+    toolbar.addHandler('link', this.linkEventHanlder);
+    toolbar.addHandler('video', this.videoEventHanlder);
+
     this.buildButtons([].slice.call(toolbar.container.querySelectorAll('button')), icons);
     this.buildPickers([].slice.call(toolbar.container.querySelectorAll('select')), icons);
     this.tooltip = new SnowTooltip(this.quill, this.options.bounds);
     //this.tooltip.root.appendChild(toolbar.container);
     this.actionBtn = new ContentTooltip(this.quill, this.options.bounds);
-    this.actionBtn.root.appendChild(toolbar.container);
-    console.log('here',this);
+    //this.actionBtn.root.appendChild(toolbar.container);
+    // console.log('here',this);
 
     if (toolbar.container.querySelector('.ql-link')) {
       this.quill.keyboard.addBinding({ key: 'K', shortKey: true }, function(range, context) {
@@ -59,37 +62,59 @@ class Contentco extends BaseTheme {
       });
     }
   }
+  linkEventHanlder(){
+    this.quill.theme.tooltip.edit('link');
+    if (this.quill.theme.tooltip.root.offsetLeft < 0) {
+      this.quill.theme.tooltip.root.style.left = '0px';
+      this.quill.theme.tooltip.textbox.placeholder = '';
+    }
+  }
+
+  videoEventHanlder(){
+    this.quill.theme.tooltip.edit('video');
+    if (this.quill.theme.tooltip.root.offsetLeft < 0) {
+      this.quill.theme.tooltip.root.style.left = '0px';
+    }
+  }
 }
 
 
 
-class ContentTooltip extends BaseTooltip {
-  constructor(quill, bounds) {
-    super(quill, bounds);
+class ContentTooltip {
+  constructor(quill, boundsContainer) {
+    this.quill = quill;
+    this.boundsContainer = this.quill.container || document.body;
+    this.root = quill.addContainer('ql-action');
+    this.root.innerHTML = this.constructor.TEMPLATE;
+
+    if (this.quill.root === this.quill.scrollingContainer) {
+      this.quill.root.addEventListener('scroll', () => {
+        this.root.style.marginTop = (-1*this.quill.root.scrollTop) + 'px';
+      });
+    }
+
+    this.root.classList.add('ql-hidden');//testing
+
     this.quill.on(Emitter.events.EDITOR_CHANGE, (type, range, oldRange, source) => {
       if (type !== Emitter.events.SELECTION_CHANGE) return;
       if (range != null && range.length > 0 && source === Emitter.sources.USER) {
         this.show();
-        // Lock our width so we will expand beyond our offsetParent boundaries
-        this.root.style.left = '0px';
-        this.root.style.width = '';
-        this.root.style.width = this.root.offsetWidth + 'px';
         let lines = this.quill.getLines(range.index, range.length);
         if (lines.length === 1) {
-          this.position(this.quill.getBounds(range));
-          this.position({bottom:this.quill.getBounds(range).bottom,height:this.quill.getBounds(range).height,left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,right: 0,top:this.quill.getBounds(range).top,width:this.quill.getBounds(range).width});
-        } else {
-          let lastLine = lines[lines.length - 1];
-          let index = this.quill.getIndex(lastLine);
-          let length = Math.min(lastLine.length() - 1, range.index + range.length - index);
-          let bounds = this.quill.getBounds(new Range(index, length));
-          this.position(bounds);
+          this.position({bottom:this.quill.getBounds(range).bottom,
+            height:this.quill.getBounds(range).height,left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,
+            right: this.root.offsetWidth/2,top:this.quill.getBounds(range).top,width:this.quill.getBounds(range).width});
         }
       } else if (document.activeElement !== this.textbox && this.quill.hasFocus()) {
         this.hide();
       }
     });
   }
+
+  hide(){
+    this.root.classList.add('ql-hidden');
+  }
+
 
   listen() {
     super.listen();
@@ -112,23 +137,20 @@ class ContentTooltip extends BaseTooltip {
     this.show();
   }
 
-  position(reference) {
-    let shift = super.position(reference);
-    let arrow = this.root.querySelector('.ql-tooltip-arrow');
-    if (arrow) {
-      arrow.style.marginLeft = '';
-      if (shift === 0) return shift;
-      arrow.style.marginLeft = (-1*shift - arrow.offsetWidth/2) + 'px';
-    }
+  show() {
+    this.root.classList.remove('ql-editing');
+    this.root.classList.remove('ql-hidden');
+  }
 
+  position(reference) {
+    console.log(reference);
+    let right = reference.right;
+    let top = reference.bottom + this.quill.root.scrollTop;
+    this.root.style.right = '-'+ right + 'px';
+    this.root.style.top = top + 'px';
   }
 }
-ContentTooltip.TEMPLATE = [
-  '<div class="ql-tooltip-editor">',
-    '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">',
-    '<a class="ql-close"></a>',
-  '</div>'
-].join('');
+ContentTooltip.TEMPLATE = [].join('');
 
 //Snow tooltip
 class SnowTooltip extends BaseTooltip {
@@ -196,11 +218,14 @@ class InlineToolbar extends Toolbar {
   constructor(quill, options) {
     super(quill, options);
     this.container.classList.add('ql-toolbar-hybrid');
-    this.container.classList.add('ql-snow');
+    //this.container.classList.add('ql-snow');
     this.buildButtons([].slice.call(this.container.querySelectorAll('button')), icons);
     this.buildPickers([].slice.call(this.container.querySelectorAll('select')), icons);
     this.addHandler('link', this.linkEventHanlder);
     this.addHandler('video', this.videoEventHanlder);
+
+    this.actionBtn = new ContentTooltip(this.quill, this.options.bounds);
+    this.actionBtn.root.appendChild(this.container);
   }
 
   linkEventHanlder(){

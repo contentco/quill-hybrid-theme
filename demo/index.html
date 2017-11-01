@@ -64,13 +64,6 @@
         <script type="text/javascript">
           var toolbarOptions = {
             container: [
-              ['comment']
-            ],
-            handlers: {'comment': function() {}}
-          }
-
-          var inlineToolbarOptions = {
-            container: [
               [ 'bold', 'italic', 'underline', 'strike', 'blockquote',
               { 'list': 'bullet' },
               { 'list': 'ordered' },
@@ -78,10 +71,16 @@
               { 'indent': '+1' },
               { 'color': [] },
               { 'background': [] },
-              { 'header': [1, 2, 3, false] },
               { 'align': [] },
               'link', 'image', 'video',
               ]
+            ],
+            handlers: {'comment': function() {}}
+          }
+
+          var inlineToolbarOptions = {
+            container: [
+              ['comment']
             ],
             handlers: {'comment': function() {}}
           }
@@ -97,7 +96,7 @@
 
           var quillTwo = new Quill('#bubble-editor', {
               modules: {
-                    toolbar: toolbarOptions,
+                    toolbar: inlineToolbarOptions,
                     inline_comment: true
               },
               placeholder: 'Compose an epic...',

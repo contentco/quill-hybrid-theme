@@ -906,13 +906,13 @@
   border: 1px solid #ccc;
 }
 
-.ql-toolbar-hybrid{
+/*.ql-toolbar-hybrid{
   border: 1px solid #ccc;
   box-sizing: border-box;
   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   padding: 8px;
   border-bottom: 0px;
-}
+}*/
 
 .ql-hybrid .ql-tooltip {
     background-color: #fff !important;
@@ -932,4 +932,19 @@
 
 .ql-bubble * {
     box-sizing: border-box;
+}
+
+.ql-action{
+  position: absolute;
+  top: 30px;
+  right: -25px;
+  padding: 10px;
+  border: 1px solid #eee;
+  box-shadow: 0 3px 3px rgba(0,0,0,0.05);
+  background: rgba(255,255,255,0.85);
+  border-radius: 100%;
+  opacity: 1;
+  cursor: pointer;
+  z-index: 101;
+  transition: opacity .25s ease-in-out;
 }
