@@ -140,7 +140,7 @@ class ContentTooltip {
           this.position({bottom:this.quill.getBounds(range).bottom,
             height:this.quill.getBounds(range).height,
             left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,
-            right: this.root.offsetWidth/2,top:this.quill.getBounds(range).top - this.root.offsetHeight/2,width:this.quill.getBounds(range).width});
+            right: this.root.offsetWidth,top:this.quill.getBounds(range).top - this.root.offsetHeight/2,width:this.quill.getBounds(range).width});
         }
         else {
         //   let lastLine = lines[lines.length - 1];
@@ -158,7 +158,6 @@ class ContentTooltip {
   hide(){
     this.root.classList.add('ql-hidden');
   }
-
 
   listen() {
     super.listen();
@@ -190,10 +189,11 @@ class ContentTooltip {
     let left = reference.left;
     let right = reference.right;
     let top = reference.top;
-    this.root.style.right = '-' + right + 'px';
+    this.root.style.right = '0px';
     this.root.style.top = top + 'px';
   }
 }
+
 ContentTooltip.TEMPLATE = [].join('');
 
 //Snow tooltip

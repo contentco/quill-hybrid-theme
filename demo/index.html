@@ -93,16 +93,16 @@
               theme: 'hybrid',
           });
 
-          // var quillTwo = new Quill('#bubble-editor', {
-          //     modules: {
-          //           toolbar: inlineToolbarOptions,
-          //           inline_comment: true
-          //     },
-          //     placeholder: 'Compose an epic...',
-          //     theme: 'bubble',
-          // });
+          var quillTwo = new Quill('#bubble-editor', {
+              modules: {
+                    toolbar: inlineToolbarOptions
+              },
+              placeholder: 'Compose an epic...',
+              theme: 'hybrid',
+          });
           var content = '<p>testing content for new theme</p><p>testing content for new theme</p>';
           quill.pasteHTML(content);
+          quillTwo.pasteHTML(content);
         setInterval( function() { document.getElementById("output_delta").value=JSON.stringify(quill.editor.getDelta()) }, 500);
         setInterval( function() { document.getElementById("output_html").value=quill.root.innerHTML }, 500);
         </script>
