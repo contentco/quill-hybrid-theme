@@ -2,6 +2,7 @@
     <head>
         <meta charset="utf-8">
         <link href="https://cdn.quilljs.com/1.2.2/quill.snow.css" rel="stylesheet">
+        <link href="https://cdn.quilljs.com/1.2.2/quill.bubble.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="../dist/quill-hybrid-theme.css">
         <style type="text/css">
           .container{
@@ -13,12 +14,12 @@
     <body>
         <div class="container" style="position:relative;">
             <h2>Editor</h2>
-            <div id="quill-editor" style="max-height: 200px;"></div>
+            <div id="quill-editor" style="max-height: 800px;"></div>
         </div>
 
         <div class="container" style="position:relative;">
             <h2>Bubble Editor</h2>
-            <div id="bubble-editor" style="max-height: 200px;"></div>
+            <div id="bubble-editor" style="max-height: 800px;"></div>
         </div>
 
         <div class="container">
@@ -69,16 +70,19 @@
               theme: 'hybrid',
           });
 
-          var quillTwo = new Quill('#bubble-editor', {
-              modules: {
-                    toolbar: inlineToolbarOptions
-              },
-              placeholder: 'Compose an epic...',
-              theme: 'hybrid',
-          });
-          var content = '<p>testing content for new theme</p><p>testing content for new theme</p>';
+          // var quillTwo = new Quill('#bubble-editor', {
+          //     modules: {
+          //           toolbar: inlineToolbarOptions,
+          //           //inline_comment: true
+          //     },
+          //     placeholder: 'Compose an epic...',
+          //     theme: 'bubble',
+          // });
+
+
+          var content = '<p>testing content for new theme</p><p>testing content for new theme</p><p><img src="https://boltmedia-test.s3-ap-southeast-1.amazonaws.com/common/a/1509614369.13/dining.jpeg"></p><p>testing</p>';
           quill.pasteHTML(content);
-          quillTwo.pasteHTML(content);
+          //quillTwo.pasteHTML(content);
         setInterval( function() { document.getElementById("output_delta").value=JSON.stringify(quill.editor.getDelta()) }, 500);
         setInterval( function() { document.getElementById("output_html").value=quill.root.innerHTML }, 500);
         </script>

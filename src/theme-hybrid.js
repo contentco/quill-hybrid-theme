@@ -120,24 +120,15 @@ class ContentTooltip {
       if (type !== Emitter.events.SELECTION_CHANGE) return;
       if (range != null && range.length > 0 && source === Emitter.sources.USER) {
         this.show();
-        // Lock our width so we will expand beyond our offsetParent boundaries
-        // this.root.style.left = '0px';
-        // this.root.style.width = '';
-        // this.root.style.width = this.root.offsetWidth + 'px';
         let lines = this.quill.getLines(range.index, range.length);
         if (lines.length === 1) {
-          //this.position(this.quill.getBounds(range));
-          this.position({bottom:this.quill.getBounds(range).bottom,
-            height:this.quill.getBounds(range).height,
-            left:this.quill.container.offsetWidth - this.quill.getBounds(range).width/2,
-            right: this.root.offsetWidth,top:this.quill.getBounds(range).top - this.root.offsetHeight/2,width:this.quill.getBounds(range).width});
-        }
-        else {
-        //   let lastLine = lines[lines.length - 1];
-        //   let index = this.quill.getIndex(lastLine);
-        //   let length = Math.min(lastLine.length() - 1, range.index + range.length - index);
-        //   let bounds = this.quill.getBounds(new Range(index, length));
-        //   this.position(bounds);
+          this.position(this.quill.getBounds(range));
+        } else {
+          let lastLine = lines[lines.length - 1];
+          let index = this.quill.getIndex(lastLine);
+          let length = Math.min(lastLine.length() - 1, range.index + range.length - index);
+          let bounds = this.quill.getBounds(new Range(index, length));
+          this.position(bounds);
         }
       } else if (document.activeElement !== this.textbox && this.quill.hasFocus()) {
         this.hide();
@@ -176,9 +167,18 @@ class ContentTooltip {
   }
 
   position(reference) {
-    let top = reference.top;
+    let top = reference.bottom + this.quill.root.scrollTop;
     this.root.style.right = '0px';
     this.root.style.top = top + 'px';
+    this.root.classList.remove('ql-flip');
+    let containerBounds = this.boundsContainer.getBoundingClientRect();
+    let rootBounds = this.root.getBoundingClientRect();
+    if (rootBounds.bottom > containerBounds.bottom) {
+      let height = rootBounds.bottom - rootBounds.top;
+      let verticalShift = reference.bottom - reference.top + height;
+      this.root.style.top = (top - verticalShift) + 'px';
+      this.root.classList.add('ql-flip');
+    }
   }
 }
 
