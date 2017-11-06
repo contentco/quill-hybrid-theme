@@ -400,16 +400,12 @@ function createCommentDialog(quill) {
   inlineSend.addEventListener('click',function(){
     const commentObj = {};
     let commentText = document.querySelector('.commentText').value;
-    commentObj.comment = commentText;
-    // if (typeof(commentId) !== 'undefined') {
-    //   commentObj.id= commentId;
-    // }
-    // if (typeof(commentStatus) !== 'undefined') {
-    //   commentObj.resolved= commentStatus;
-    // }
     commentToolTip.remove();
     containerMask.remove();
-    quill.format('comment', commentObj);
+    if (commentText.length > 0) {
+      commentObj.comment = commentText;
+      quill.format('comment', commentObj);
+    }
   });
 }
 
