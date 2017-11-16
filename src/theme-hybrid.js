@@ -167,18 +167,19 @@ class ContentTooltip {
   }
 
   position(reference) {
-    let top = reference.bottom + this.quill.root.scrollTop;
+    // let top = reference.bottom + this.quill.root.scrollTop;
+    let top = reference.top + (reference.height / 2) - 25 + this.quill.root.scrollTop;
     this.root.style.right = '0px';
     this.root.style.top = top + 'px';
     this.root.classList.remove('ql-flip');
     let containerBounds = this.boundsContainer.getBoundingClientRect();
     let rootBounds = this.root.getBoundingClientRect();
-    if (rootBounds.bottom > containerBounds.bottom) {
-      let height = rootBounds.bottom - rootBounds.top;
-      let verticalShift = reference.bottom - reference.top + height;
-      this.root.style.top = (top - verticalShift) + 'px';
-      this.root.classList.add('ql-flip');
-    }
+    // if (rootBounds.bottom > containerBounds.bottom) {
+    //   let height = rootBounds.bottom - rootBounds.top;
+    //   let verticalShift = reference.bottom - reference.top + height;
+    //   this.root.style.top = (top - verticalShift) + 'px';
+    //   this.root.classList.add('ql-flip');
+    // }
   }
 }
 
